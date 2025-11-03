@@ -9,11 +9,11 @@ app.use(cors());
 
 // ✅ PostgreSQL connection (safe for Render with SSL)
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL.includes('?')
-    ? process.env.DATABASE_URL + '&sslmode=require'
-    : process.env.DATABASE_URL + '?sslmode=require',
-  ssl: { rejectUnauthorized: false }
-});
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    require: true,
+    rejectUnauthorized: false
+  }
 
 // ✅ Automatically create the scores table if it doesn’t exist
 async function initDB() {
