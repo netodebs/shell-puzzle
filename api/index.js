@@ -9,8 +9,10 @@ app.use(express.json());
 app.use(cors());
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  connectionString: process.env.DATABASE_URL + "?sslmode=require",
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // POST route to store score
