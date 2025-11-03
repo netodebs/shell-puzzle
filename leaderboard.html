@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Shell Booth Puzzle Challenge — Leaderboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg-start:#003a59;
+  --bg-end:#001f33;
+  --shell-yellow:#FFD700;
+  --accent-red:#D90429;
+  --muted:#98a8be;
+  --card-bg:linear-gradient(180deg,rgba(7,17,51,0.92),rgba(9,32,58,0.92));
+}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color:#fff;overflow:hidden}
+body{
+  background:linear-gradient(180deg,var(--bg-start),var(--bg-end));
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+.bg-ambient{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(900px 600px at 12% 18%,rgba(255,220,120,0.05),transparent 15%),
+              radial-gradient(900px 500px at 88% 80%,rgba(0,120,180,0.02),transparent 18%);
+  mix-blend-mode:overlay;
+  animation:ambientMove 18s linear infinite;
+  opacity:.95;
+}
+@keyframes ambientMove{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+main{position:relative;z-index:30;max-width:1800px;margin:18px auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.title-block{display:flex;align-items:center;gap:12px}
+h1{font-weight:900;font-size:34px;margin:0;line-height:1}
+.live-badge{background:var(--accent-red);color:#fff;font-weight:900;padding:6px 10px;border-radius:8px;margin-left:10px;animation:livePulse 1400ms infinite;font-size:.9rem}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.5}}
+.last-updated{color:#c9d7e8;opacity:.95;font-size:.95rem;margin-top:6px}
+
+#podiumContainer{display:flex;align-items:flex-end;justify-content:center;gap:26px;margin-top:36px}
+.podium-card{
+  background:var(--card-bg);
+  border:1px solid rgba(255,215,0,.07);
+  border-radius:14px;
+  padding:18px;
+  text-align:center;
+  box-shadow:0 18px 60px rgba(0,0,0,.6);
+}
+#rank-1-card{
+  width:46%;
+  transform:translateY(-8%);
+  border:2px solid rgba(255,215,0,.18);
+  box-shadow:0 0 60px rgba(255,215,0,.25);
+  position:relative;
+}
+#rank-2-card,#rank-3-card{width:24%;transform:translateY(8%)}
+
+/* Winner Gift Box Image */
+.gift-box-img{
+  width:150px;height:auto;display:block;margin:0 auto 10px;
+  filter:drop-shadow(0 0 24px rgba(255,215,0,0.45)) drop-shadow(0 0 60px rgba(255,215,0,0.25));
+  animation:boxGlow 2.5s ease-in-out infinite alternate;
+  border-radius:10px;
+}
+@keyframes boxGlow{
+  0%{transform:scale(1);filter:drop-shadow(0 0 18px rgba(255,215,0,0.25))}
+  100%{transform:scale(1.05);filter:drop-shadow(0 0 60px rgba(255,215,0,0.6))}
+}
+#rank-1-card::after{content:"";position:absolute;inset:0;border-radius:14px;box-shadow:0 0 36px rgba(255,215,0,.25);pointer-events:none}
+.rank-circle{width:46px;height:46px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;margin:6px auto}
+.rank-1 .rank-circle{background:var(--shell-yellow);color:#000}
+.rank-2 .rank-circle{background:#c0c0c0;color:#000}
+.rank-3 .rank-circle{background:#cd7f32;color:#000}
+.podium-name,.podium-institution{font-weight:800;font-size:1.45rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:4px 0}
+.podium-institution{color:#e0eaf6;opacity:.95}
+.small-meta{font-size:.86rem;color:#9fb0c7;margin-top:6px}
+.podium-stats{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.04);font-size:1rem;display:flex;align-items:center;justify-content:center;gap:12px;color:#fff}
+.podium-stats .time{color:var(--shell-yellow);font-weight:900;font-size:1.05rem}
+.winner-text{
+  font-weight:900;font-size:28px;letter-spacing:1px;margin-top:6px;
+  background:linear-gradient(90deg,rgba(255,215,0,.96),rgba(255,245,170,.98),rgba(255,215,0,.96));
+  background-clip:text;-webkit-background-clip:text;color:transparent;
+  position:relative;display:inline-block;padding:6px 12px;border-radius:6px;
+  text-transform:uppercase;overflow:hidden;
+}
+.winner-text::before{
+  content:'';position:absolute;top:0;left:-60%;height:100%;width:60%;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.55),rgba(255,255,255,0));
+  transform:skewX(-20deg);animation:shimmerMove .9s linear infinite;
+  pointer-events:none;mix-blend-mode:overlay;
+}
+@keyframes shimmerMove{0%{left:-60%}100%{left:140%}}
+#othersGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:32px}
+.other-card{background:var(--card-bg);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(255,215,0,.06);box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.other-rank{font-weight:900;font-size:1.15rem;width:52px;text-align:center;color:#cbd9e8}
+.other-info h4{margin:0;font-size:1rem;font-weight:800}
+.other-info p{margin:0;font-size:.86rem;color:#9fb0c7}
+#sparkles{position:fixed;inset:0;z-index:20;pointer-events:none}
+.spark{position:absolute;width:6px;height:6px;border-radius:50%;opacity:0;box-shadow:0 0 18px rgba(255,215,0,.95);animation:sparkMove 4s linear infinite;mix-blend-mode:screen}
+@keyframes sparkMove{0%{transform:translateY(0)scale(.6);opacity:0}10%{opacity:.95}40%{opacity:.4}100%{transform:translateY(-200px)scale(.6);opacity:0}}
+@media (max-width:1200px){#rank-1-card{width:54%;transform:translateY(-4%)}#rank-2-card,#rank-3-card{width:22%;transform:translateY(6%)}}
+@media (max-width:900px){#podiumContainer{flex-direction:column;align-items:center;gap:18px}#rank-1-card{width:84%;transform:none}#rank-2-card,#rank-3-card{width:72%;transform:none}#othersGrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="bg-ambient"></div>
+<canvas id="confettiCanvas" width="1920" height="1080" style="position:fixed;left:0;top:0;z-index:25;pointer-events:none"></canvas>
+<div id="sparkles"></div>
+
+<main>
+<header>
+  <div class="title-block">
+    <img src="https://www.shell.com.ng/etc.clientlibs/amidala/clientlibs/theme-base/resources/favicon/favicon.svg" alt="Shell Logo" style="width:44px;height:44px;display:block;filter:drop-shadow(0 8px 18px rgba(255,215,0,.08))"/>
+    <div>
+      <h1><span style="color:var(--shell-yellow)">Shell Booth</span> Puzzle Challenge — Leaderboard <span class="live-badge">LIVE</span></h1>
+      <div id="lastUpdated" class="last-updated">Last updated: —</div>
+    </div>
+  </div>
+</header>
+
+<section id="podiumContainer">
+  <div id="rank-2-card" class="podium-card rank-2">
+    <div class="rank-circle">2</div>
+    <div class="podium-name" id="r2-name">—</div>
+    <div class="podium-institution" id="r2-inst">—</div>
+    <div class="small-meta" id="r2-achieved">Achieved: —</div>
+    <div class="podium-stats"><div class="time" id="r2-time">—</div><div>|</div><div id="r2-moves">— moves</div></div>
+  </div>
+
+  <div id="rank-1-card" class="podium-card rank-1">
+    <img src="https://www.ripmark.com.ng/wp-content/uploads/2025/10/christmas-gift-box-vector-illustration-christmas-gift-box-vector_891172-9388.png" alt="Winner Gift Box" class="gift-box-img"/>
+    <div class="winner-text">WINNER</div>
+    <div class="podium-name" id="r1-name">—</div>
+    <div class="podium-institution" id="r1-inst">—</div>
+    <div class="small-meta" id="r1-achieved">Achieved: —</div>
+    <div class="podium-stats"><div class="time" id="r1-time">—</div><div>|</div><div id="r1-moves">— moves</div></div>
+  </div>
+
+  <div id="rank-3-card" class="podium-card rank-3">
+    <div class="rank-circle">3</div>
+    <div class="podium-name" id="r3-name">—</div>
+    <div class="podium-institution" id="r3-inst">—</div>
+    <div class="small-meta" id="r3-achieved">Achieved: —</div>
+    <div class="podium-stats"><div class="time" id="r3-time">—</div><div>|</div><div id="r3-moves">— moves</div></div>
+  </div>
+</section>
+
+<section style="margin-top:28px">
+  <h2 style="text-align:center;font-size:1.6rem;font-weight:900;margin:0 0 12px 0;color:#e6f4ff">Top Solvers (4–9)</h2>
+  <div id="othersGrid"></div>
+</section>
+</main>
+
+<script>
+const LOCAL_SCORES_KEY='puzzle_scores_v2';
+const SERVER_URL = 'http://172.20.10.2';
+const canvas=document.getElementById('confettiCanvas'),ctx=canvas.getContext('2d');
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
+resize();window.addEventListener('resize',resize);
+let particles=[];
+function P(x,y,vx,vy,s,c,life,rot){
+  this.x=x;this.y=y;this.vx=vx;this.vy=vy;this.size=s;this.color=c;this.life=life;this.rot=rot||0;
+  this.update=function(){this.vy+=0.03;this.vx*=0.995;this.x+=this.vx;this.y+=this.vy;this.rot+=0.06;this.life-=1;};
+  this.draw=function(){ctx.save();ctx.translate(this.x,this.y);ctx.rotate(this.rot);ctx.globalAlpha=Math.max(this.life/140,0.08);ctx.fillStyle=this.color;ctx.fillRect(-this.size/2,-this.size/2,this.size,this.size*0.6);ctx.restore();ctx.globalAlpha=1;}
+}
+function spawnBackground(){const w=innerWidth,h=innerHeight;const cols=['#FFD700','#fff','#fdd835'];for(let i=0;i<4;i++){const x=Math.random()*w;const y=Math.random()*h;const vx=(Math.random()-0.5)*0.5;const vy=(Math.random()-0.5)*0.5;const s=Math.random()*4+1;particles.push(new P(x,y,vx,vy,s,cols[Math.floor(Math.random()*cols.length)],250+Math.random()*100,Math.random()))}}
+function burstLocal(){const el=document.getElementById('rank-1-card');if(!el)return;const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height*0.2;const cols=['#FFD700','#FFF','#FFD700','#FFF'];for(let i=0;i<45;i++){const angle=Math.random()*Math.PI*2;const speed=Math.random()*5+2;const vx=Math.cos(angle)*speed;const vy=Math.sin(angle)*speed*0.6;const s=Math.random()*8+4;particles.push(new P(cx,cy,vx,vy,s,cols[Math.floor(Math.random()*cols.length)],200+Math.random()*80,Math.random()*1))}}
+function anim(){ctx.clearRect(0,0,canvas.width,canvas.height);spawnBackground();for(let i=particles.length-1;i>=0;i--){particles[i].update();particles[i].draw();if(particles[i].life<=0)particles.splice(i,1);}requestAnimationFrame(anim);}
+anim();setInterval(burstLocal,3000);
+
+// sparkles
+function createSparkles(){const c=document.getElementById('sparkles');for(let i=0;i<30;i++){const s=document.createElement('div');s.className='spark';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';const sz=3+Math.random()*7;s.style.width=sz+'px';s.style.height=sz+'px';s.style.background=(Math.random()>.45)?'#FFD700':'#fff';s.style.animationDelay=(Math.random()*3)+'s';c.appendChild(s);}}
+createSparkles();
+
+function fmt(ts){if(!ts)return'—';return new Date(ts).toLocaleString([], {dateStyle:'medium',timeStyle:'short'});}
+function updLU(){const e=document.getElementById('lastUpdated');if(e)e.textContent='Last updated: '+(new Date()).toLocaleString();}
+async function load(){
+  let s = [];
+  try {
+    const response = await fetch(`${SERVER_URL}/scores`);
+    if (!response.ok) throw new Error('Server offline');
+    s = await response.json();
+  } catch(e) {
+    console.error('Failed to load scores:', e);
+    s = []; // Show an empty board on error
+  }
+  s.sort((a,b)=>a.time===b.time?(a.moves||0)-(b.moves||0):a.time-b.time);
+  const fill=(p,pref)=>{
+    const n=document.getElementById(pref+'-name'),i=document.getElementById(pref+'-inst'),
+          t=document.getElementById(pref+'-time'),m=document.getElementById(pref+'-moves'),
+          a=document.getElementById(pref+'-achieved');
+    if(!p){[n,i,t,m,a].forEach(el=>{if(el)el.textContent='—'});return;}
+    const parts=(p.id||'Unknown — Unknown').split(' — ');
+    if(n)n.textContent=parts[0]||'Unknown';
+    if(i)i.textContent=parts[1]||'';
+    if(t)t.textContent=(typeof p.time==='number')?p.time.toFixed(2)+'s':p.time;
+    if(m)m.textContent=(p.moves||0)+' moves';
+    if(a)a.textContent='Achieved: '+(p.ts?fmt(p.ts):'—');
+  };
+  fill(s[0],'r1');fill(s[1],'r2');fill(s[2],'r3');
+  const grid=document.getElementById('othersGrid');
+  grid.innerHTML='';
+  s.slice(3,9).forEach((p,idx)=>{
+    const rank=idx+4;const parts=(p.id||'Unknown — Unknown').split(' — ');
+    const div=document.createElement('div');
+    div.className='other-card';
+    div.innerHTML=`<div style="display:flex;gap:10px;align-items:center;">
+      <div class="other-rank">#${rank}</div>
+      <div class="other-info"><h4>${parts[0]||'Unknown'}</h4><p>${parts[1]||''}</p>
+      <p style="font-size:0.78rem;color:#93a9bf;margin-top:6px">Achieved: ${p.ts?fmt(p.ts):'—'}</p></div></div>
+      <div style="text-align:right;"><div style="color:var(--shell-yellow);font-weight:900;">${(typeof p.time==='number')?p.time.toFixed(2)+'s':p.time}</div>
+      <div style="color:#9fb0c7;font-size:0.9rem">${p.moves||0} moves</div></div>`;
+    grid.appendChild(div);
+  });
+  updLU();
+}
+load();
+setInterval(load,15000);
+</script>
+</body>
+</html>
