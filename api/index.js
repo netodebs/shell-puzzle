@@ -62,6 +62,20 @@ app.get('/scores', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 10000;
+// DELETE route (admin only) to wipe scores
+app.delete('/scores', async (req, res) => {
+  const pass = req.query.pass;
+  if (pass !== 'ShellReset2025') {
+    return res.status(403).send({ success: false, message: 'Unauthorized' });
+  }
+  try {
+    await pool.query('DELETE FROM scores');
+    res.send({ success: true, message: 'All scores cleared successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ success: false, message: 'DB Error while clearing scores' });
+  }
+});
 app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
   await initDB();
