@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <style>
   :root{
-    --bg-start:#004466;
-    --bg-end:#002244;
+    --bg-start:#FFD500;
+    --bg-end:#ED1C24;
     --card:#071133;
     --shell-yellow:#FFD700;
     --muted:#98a8be;
@@ -19,8 +20,8 @@
   body{
     margin:0;
     font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
-    color:#fff;
+    background: linear-gradient(to right, var(--bg-start), var(--bg-end));
+    color:#004466; 
     overflow:hidden;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
@@ -43,12 +44,12 @@
   .intro-card{
     width:920px;
     max-width:96%;
-    background:linear-gradient(180deg, rgba(7,17,51,0.86), rgba(9,32,58,0.86));
+    background:linear-gradient(to right, var(--bg-start), var(--bg-end));
+    color:#004466;
     border-radius:12px;
     padding:28px;
     box-shadow:0 20px 80px rgba(2,6,23,0.6);
     text-align:center;
-    color:#e6f0ff;
     border:1px solid rgba(255,215,0,0.06);
   }
   .intro-top{
@@ -68,27 +69,29 @@
   .title {
     font-size:28px;
     font-weight:800;
-    color:var(--shell-yellow);
+    color:var(--dark-blue); /* Kept yellow for contrast */
     line-height:1;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2); 
   }
 
   /* Instructions */
   .instructions-wrap{margin-top:8px;margin-bottom:14px}
   .instructions-title{
-    color:var(--shell-yellow);
+    color:var(--dark-blue); /* Kept yellow for contrast */
     font-weight:800;
     font-size:18px;
     margin:8px 0;
     text-decoration:underline;
     text-decoration-color:rgba(255,215,0,0.6);
     text-underline-offset:6px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Added shadow */
   }
   .instructions-list{
     text-align:left;
     display:inline-block;
     max-width:760px;
     margin-top:6px;
-    color:#eaf5ff;
+    color:#004466; 
     font-size:16px;
     line-height:1.6;
   }
@@ -134,7 +137,7 @@
 
   .intro-footer{
     margin-top:14px;
-    color:var(--muted);
+    color:#004466; 
     font-size:13px;
   }
 
@@ -231,6 +234,38 @@
     display:none;
     z-index:110;
     font-size:16px;
+    color: #fff; /* Keep banner text white */
+  }
+
+  /* ===== Next Player — full-width tappable bar across the bottom ===== */
+  #nextPlayerBtn{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    width:100%;
+    z-index:120;
+    display:none;            /* toggled to block by JS */
+    border:none;
+    border-top:4px solid #004466;
+    background:linear-gradient(90deg, #FFD500 0%, #FFD700 50%, #FFC400 100%);
+    color:#002b44;
+    font-family:inherit;
+    font-weight:900;
+    font-size:clamp(18px, 3.2vw, 28px);
+    letter-spacing:1px;
+    text-transform:uppercase;
+    padding:24px 16px;
+    cursor:pointer;
+    box-shadow:0 -12px 44px rgba(0,0,0,0.45);
+    animation:nextPulse 1.4s ease-in-out infinite;
+    transition:filter .14s ease, transform .08s ease;
+  }
+  #nextPlayerBtn:hover{filter:brightness(1.06)}
+  #nextPlayerBtn:active{transform:translateY(2px)}
+  @keyframes nextPulse{
+    0%,100%{box-shadow:0 -12px 44px rgba(0,0,0,0.40)}
+    50%{box-shadow:0 -12px 60px rgba(255,215,0,0.65)}
   }
 
   canvas{position:fixed;inset:0;pointer-events:none;z-index:80}
@@ -245,17 +280,15 @@
 </head>
 <body>
 
-<!-- Confetti canvas -->
 <canvas id="confettiCanvas"></canvas>
 
-<!-- Message Banner -->
 <div id="messageBanner" role="status" aria-live="polite"></div>
 
-<!-- INTRO OVERLAY -->
+<button id="nextPlayerBtn">▶ Next Player — Tap to Continue</button>
+
 <div id="introOverlay" aria-hidden="false">
   <div class="intro-card" role="dialog" aria-labelledby="introTitle" aria-describedby="introDesc">
     <div class="intro-top">
-      <!-- Real Shell favicon URL used here (appears instantly) -->
       <img class="shell-logo" alt="Shell Logo"
         src="https://www.shell.com.ng/etc.clientlibs/amidala/clientlibs/theme-base/resources/favicon/favicon.svg" />
       <div>
@@ -285,7 +318,6 @@
   </div>
 </div>
 
-<!-- GAME -->
 <div class="game-container" aria-hidden="false">
   <div class="logo-row" role="banner">
     <img class="small-logo" alt="Shell Logo Small"
@@ -300,7 +332,6 @@
 
   <div id="puzzle-grid" role="application" aria-label="3 by 3 sliding puzzle"></div>
 
-  <!-- Countdown overlay -->
   <div id="countdownWrapper" aria-hidden="true">
     <div class="countdown-ring"><span id="countdownText" class="countdown-text">3</span></div>
   </div>
@@ -311,8 +342,9 @@
 const GRID_SIZE = 3;
 const TOTAL = GRID_SIZE * GRID_SIZE;
 const TIME_LIMIT = 120; // seconds
-const IMAGE_URL = "https://www.ripmark.com.ng/wp-content/uploads/2025/09/ship.jpeg.jpeg";
+const IMAGE_URL = "https://www.ripmark.com.ng/wp-content/uploads/2026/06/WhatsApp-Image-2025-11-08-at-11.20.57.jpeg";
 const LOCAL_SCORES_KEY = 'puzzle_scores_v2';
+// === FIXED ===
 const SERVER_URL = 'https://shell-puzzle-api.onrender.com'; 
 
 /* ===== State ===== */
@@ -336,6 +368,7 @@ const countdownText = document.getElementById('countdownText');
 const messageBanner = document.getElementById('messageBanner');
 const confettiCanvas = document.getElementById('confettiCanvas');
 const ctx = confettiCanvas.getContext('2d');
+const nextPlayerBtn = document.getElementById('nextPlayerBtn');
 
 /* ===== Leaderboard helpers (SERVER) ===== */
 async function saveScoreAndGetRank(nameId, timeSec, movesCount) {
@@ -370,7 +403,7 @@ function ConfettiPiece(x,y,s,c,vx,vy){
 }
 function launchConfetti(){
   confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight;
-  for(let i=0;i<60;i++){
+  for(let i=0;i<60;i++){ // This is the "confetti" part
     const s = Math.random()*8+4;
     const c = ["#FFD700","#fff","#f00","#0f0","#00f"][Math.floor(Math.random()*5)];
     confetti.push(new ConfettiPiece(innerWidth/2, innerHeight/2, s, c, (Math.random()-0.5)*10, (Math.random()-6)*10));
@@ -465,23 +498,67 @@ function showMessage(text, timeout = 2500){
 async function handleWin(){
   stopTimer();
   isRunning = false;
+
+  // Reveal the 9th tile
+  const lastTile = puzzleGrid.querySelector('.puzzle-tile.empty');
+  if (lastTile) {
+      lastTile.classList.remove('empty');
+      const val = TOTAL - 1;
+      const row = Math.floor(val / GRID_SIZE);
+      const col = val % GRID_SIZE;
+      const denom = GRID_SIZE - 1;
+      const posX = (col / denom) * 100;
+      const posY = (row / denom) * 100;
+      
+      lastTile.style.backgroundImage = `url('${IMAGE_URL}')`;
+      lastTile.style.backgroundPosition = `${posX}% ${posY}%`;
+      lastTile.style.backgroundSize = `${GRID_SIZE * 100}% ${GRID_SIZE * 100}%`;
+  }
+  
   const finalTime = (Date.now() - startTime) / 1000;
   const nameId = `${currentPlayer.first} ${currentPlayer.last} — ${currentPlayer.institution}`;
-showMessage('Submitting score...', 2000);
+  showMessage('Submitting score...', 2000);
   const rank = await saveScoreAndGetRank(nameId, finalTime, moves);
-  launchConfetti();
+  
+  // Confetti, ballons and sparkles activate (using existing function)
+  launchConfetti(); 
+  
   if(rank > 0){
     showMessage(`🎉 ${currentPlayer.first}! Placed #${rank} — recorded on leaderboard.`, 2500);
   } else {
     showMessage(`🎉 ${currentPlayer.first}! Solved in ${finalTime.toFixed(2)}s (${moves} moves). Not in Top 10.`, 2500);
   }
-  setTimeout(()=>resetForNextPlayer(), 2600);
+  
+  // Show "Next Player" button
+  nextPlayerBtn.style.display = 'block';
+
+  // 🔥 Send score to backend API (unchanged)
+  try {
+    // === FIXED ===
+    fetch('https://shell-puzzle-api.onrender.com/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: nameId,
+        time: finalTime,
+        moves: moves,
+        institution: currentPlayer.institution,
+        ts: Date.now()
+      })
+    }).then(res => res.json())
+      .then(data => console.log('✅ Score sent to API:', data))
+      .catch(err => console.error('❌ Error sending score:', err));
+  } catch (err) {
+    console.error('❌ API send failed:', err);
+  }
 }
 
 function handleTimeout(){
   isRunning = false;
   showMessage(`⏰ Time's up — ${currentPlayer.first} failed to solve the puzzle.`, 2500);
-  setTimeout(()=>resetForNextPlayer(), 2600);
+  
+  // Show "Next Player" button
+  nextPlayerBtn.style.display = 'block';
 }
 
 /* Reset and show overlay again */
@@ -497,6 +574,8 @@ function resetForNextPlayer(){
   currentPlayer = null;
   movesEl.textContent = '0';
   timerEl.textContent = TIME_LIMIT;
+  
+  if (nextPlayerBtn) nextPlayerBtn.style.display = 'none';
 }
 
 /* Countdown before actual play */
@@ -531,6 +610,10 @@ startBtn.addEventListener('click', ()=>{
   setTimeout(()=>startCountdown(), 760);
 });
 
+// Next Player button listener
+nextPlayerBtn.addEventListener('click', resetForNextPlayer);
+
+
 /* Initialization */
 window.addEventListener('load', ()=>{
   initTiles();
@@ -541,5 +624,4 @@ window.addEventListener('load', ()=>{
 window.addEventListener('resize', ()=>{ confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight; });
 </script>
 </body>
-
 </html>
